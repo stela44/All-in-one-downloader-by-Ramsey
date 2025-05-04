@@ -2,122 +2,130 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Social Media Video Downloader</title>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <title>Lucky Draw Game</title>
   <style>
-    body, html {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      font-family: 'Poppins', sans-serif;
+    body {
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(to right, #00b09b, #96c93d);
+      color: white;
+      text-align: center;
+      padding: 40px;
     }
-    .video-bg {
+    .container {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 30px;
+      border-radius: 12px;
+      max-width: 400px;
+      margin: auto;
+    }
+    h1 {
+      margin-bottom: 20px;
+    }
+    button {
+      padding: 12px 24px;
+      font-size: 18px;
+      border: none;
+      border-radius: 8px;
+      background-color: #ffcc00;
+      color: black;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+    .winner {
+      margin-top: 30px;
+      font-size: 24px;
+      font-weight: bold;
+      color: #fff;
+      min-height: 50px;
+    }
+    .confetti {
       position: fixed;
       top: 0;
       left: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      z-index: -1;
-    }
-    .glass {
-      background: rgba(255, 255, 255, 0.75);
-      backdrop-filter: blur(10px);
-    }
-    .animated-glow {
-      animation: glow 2s ease-in-out infinite alternate;
-    }
-    @keyframes glow {
-      from {
-        box-shadow: 0 0 5px #a78bfa;
-      }
-      to {
-        box-shadow: 0 0 20px #8b5cf6, 0 0 30px #8b5cf6;
-      }
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 9999;
     }
   </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-6">
-  <video class="video-bg" autoplay muted loop>
-    <source src="https://videos.pexels.com/video-files/3129671/3129671-sd_640_360_30fps.mp4" type="video/mp4">
-    Your browser does not support the video tag.
-  </video>
-
-  <div class="max-w-2xl w-full glass rounded-3xl shadow-2xl p-8">
-    <h1 class="text-4xl font-extrabold text-center text-indigo-800 mb-4 animated-glow">📥 Download Any Video Instantly</h1>
-    <p class="text-center text-gray-700 text-lg mb-6">Paste your TikTok, Instagram, YouTube, or Twitter video link below to get started.</p>
-
-    <select id="platform" class="w-full mb-4 p-3 rounded-xl border-2 border-purple-300 shadow-md focus:outline-none focus:ring-4 focus:ring-purple-400" onchange="updatePlaceholder()">
-      <option value="">🎯 Select Platform</option>
-      <option value="tiktok">TikTok</option>
-      <option value="instagram">Instagram</option>
-      <option value="youtube">YouTube</option>
-      <option value="twitter">Twitter</option>
-    </select>
-
-    <input type="text" id="videoLink" placeholder="e.g. https://www.instagram.com/reel/xyz..." class="w-full p-4 border-2 border-purple-300 rounded-xl mb-6 shadow-md focus:outline-none focus:ring-4 focus:ring-purple-400" />
-
-    <button onclick="downloadVideo()" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white py-4 rounded-xl text-xl font-bold transition-all duration-300 transform hover:scale-105 shadow-lg">⬇️ Download Now</button>
+<body>
+  <div class="container">
+    <h1>🎉 Lucky Draw Game 🎉</h1>
+    <p>Tap the button below to spin and reveal the lucky winner!</p>
+    <button onclick="drawWinner()">🎯 Tap to See Winner</button>
+    <div class="winner" id="winnerDisplay"></div>
   </div>
+  <canvas class="confetti" id="confettiCanvas"></canvas>
+
+  <audio id="clapSound" src="https://www.soundjay.com/human/applause-01.mp3" preload="auto"></audio>
 
   <script>
-    function updatePlaceholder() {
-      const platform = document.getElementById('platform').value;
-      const input = document.getElementById('videoLink');
-      let placeholder = "";
+    const names = ["Brender", "Onesmo", "Ramsey", "Anna", "James", "Ali", "Maria", "John", "Aisha", "David", "Fatma", "Joseph", "Zainab"];
 
-      switch (platform) {
-        case "tiktok":
-          placeholder = "e.g. https://www.tiktok.com/@user/video/xyz...";
-          break;
-        case "instagram":
-          placeholder = "e.g. https://www.instagram.com/reel/xyz...";
-          break;
-        case "youtube":
-          placeholder = "e.g. https://www.youtube.com/watch?v=xyz...";
-          break;
-        case "twitter":
-          placeholder = "e.g. https://twitter.com/user/status/xyz...";
-          break;
-        default:
-          placeholder = "Paste your video link here...";
-      }
-
-      input.placeholder = placeholder;
+    function drawWinner() {
+      const display = document.getElementById("winnerDisplay");
+      display.innerText = "Spinning...";
+      let spinCount = 0;
+      const maxSpins = 20;
+      const spinInterval = setInterval(() => {
+        const randomIndex = Math.floor(Math.random() * names.length);
+        display.innerText = `🎲 ${names[randomIndex]} 🎲`;
+        spinCount++;
+        if (spinCount >= maxSpins) {
+          clearInterval(spinInterval);
+          const winner = names[Math.floor(Math.random() * names.length)];
+          display.innerText = `🏆 The winner is: ${winner}! 🏆`;
+          document.getElementById("clapSound").play();
+          startConfetti();
+          setTimeout(stopConfetti, 5000);
+        }
+      }, 100);
     }
 
-    function downloadVideo() {
-      const link = document.getElementById('videoLink').value.trim();
-      const platform = document.getElementById('platform').value;
+    // Simple confetti effect
+    const confettiCanvas = document.getElementById('confettiCanvas');
+    const ctx = confettiCanvas.getContext('2d');
+    let confettiParticles = [];
 
-      if (!link || !platform) {
-        alert("🚨 Please paste a link and select a platform.");
-        return;
-      }
+    function resizeCanvas() {
+      confettiCanvas.width = window.innerWidth;
+      confettiCanvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
 
-      let downloadURL = "";
+    function startConfetti() {
+      confettiParticles = Array.from({length: 150}, () => ({
+        x: Math.random() * window.innerWidth,
+        y: Math.random() * window.innerHeight - window.innerHeight,
+        r: Math.random() * 6 + 4,
+        d: Math.random() * 40 + 10,
+        color: `hsl(${Math.random() * 360}, 100%, 50%)`
+      }));
+      animateConfetti();
+    }
 
-      switch (platform) {
-        case "tiktok":
-          downloadURL = `https://ttsave.app/en/download?url=${encodeURIComponent(link)}`;
-          break;
-        case "instagram":
-          downloadURL = `https://snapsave.app/instagram?url=${encodeURIComponent(link)}`;
-          break;
-        case "youtube":
-          downloadURL = `https://en.savefrom.net/1-youtube-video-downloader-4/?url=${encodeURIComponent(link)}`;
-          break;
-        case "twitter":
-          downloadURL = `https://twdown.net/download.php?URL=${encodeURIComponent(link)}`;
-          break;
-        default:
-          alert("❌ Unsupported platform selected.");
-          return;
-      }
+    function animateConfetti() {
+      ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+      confettiParticles.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.fill();
+        p.y += Math.cos(p.d) + 2;
+        p.x += Math.sin(p.d);
+        if (p.y > window.innerHeight) {
+          p.y = -10;
+          p.x = Math.random() * window.innerWidth;
+        }
+      });
+      requestAnimationFrame(animateConfetti);
+    }
 
-      window.open(downloadURL, '_blank');
+    function stopConfetti() {
+      confettiParticles = [];
+      ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
     }
   </script>
 </body>
